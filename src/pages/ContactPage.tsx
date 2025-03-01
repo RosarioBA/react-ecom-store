@@ -1,5 +1,6 @@
 // src/pages/ContactPage.tsx
 import React, { useState, FormEvent, ChangeEvent } from 'react';
+import styled from 'styled-components';
 
 interface FormData {
   fullName: string;
@@ -15,6 +16,96 @@ interface FormErrors {
   body?: string;
 }
 
+const ContactContainer = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
+
+const Title = styled.h1`
+  margin-bottom: 2rem;
+  text-align: center;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+`;
+
+const Input = styled.input<{ hasError?: boolean }>`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid ${props => props.hasError ? '#dc3545' : '#ced4da'};
+  border-radius: 4px;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: ${props => props.hasError ? '#dc3545' : '#80bdff'};
+    box-shadow: ${props => props.hasError 
+      ? '0 0 0 0.2rem rgba(220, 53, 69, 0.25)' 
+      : '0 0 0 0.2rem rgba(0, 123, 255, 0.25)'};
+  }
+`;
+
+const TextArea = styled.textarea<{ hasError?: boolean }>`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid ${props => props.hasError ? '#dc3545' : '#ced4da'};
+  border-radius: 4px;
+  font-size: 1rem;
+  min-height: 150px;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: ${props => props.hasError ? '#dc3545' : '#80bdff'};
+    box-shadow: ${props => props.hasError 
+      ? '0 0 0 0.2rem rgba(220, 53, 69, 0.25)' 
+      : '0 0 0 0.2rem rgba(0, 123, 255, 0.25)'};
+  }
+`;
+
+const ErrorMessage = styled.p`
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+`;
+
+const SubmitButton = styled.button`
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  
+  &:hover {
+    background-color: #0069d9;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  background-color: #d4edda;
+  color: #155724;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+`;
+
 const ContactPage: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -25,6 +116,7 @@ const ContactPage: React.FC = () => {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const validateForm = (): boolean => {
     let tempErrors: FormErrors = {};
@@ -67,76 +159,90 @@ const ContactPage: React.FC = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      console.log("Form submitted:", formData);
-      setIsSubmitted(true);
-      setFormData({
-        fullName: '',
-        subject: '',
-        email: '',
-        body: ''
-      });
+      setIsSubmitting(true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        console.log("Form submitted:", formData);
+        setIsSubmitted(true);
+        setIsSubmitting(false);
+        setFormData({
+          fullName: '',
+          subject: '',
+          email: '',
+          body: ''
+        });
+      }, 1000);
     }
   };
 
   return (
-    <div>
-      <h1>Contact Us</h1>
+    <ContactContainer>
+      <Title>Contact Us</Title>
+      
       {isSubmitted && (
-        <div>
+        <SuccessMessage>
           <p>Thank you for your message! We'll get back to you soon.</p>
-        </div>
+        </SuccessMessage>
       )}
+      
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="fullName">Full Name</label>
-          <input
+        <FormGroup>
+          <Label htmlFor="fullName">Full Name</Label>
+          <Input
             type="text"
             id="fullName"
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
+            hasError={!!errors.fullName}
           />
-          {errors.fullName && <p>{errors.fullName}</p>}
-        </div>
+          {errors.fullName && <ErrorMessage>{errors.fullName}</ErrorMessage>}
+        </FormGroup>
 
-        <div>
-          <label htmlFor="subject">Subject</label>
-          <input
+        <FormGroup>
+          <Label htmlFor="subject">Subject</Label>
+          <Input
             type="text"
             id="subject"
             name="subject"
             value={formData.subject}
             onChange={handleChange}
+            hasError={!!errors.subject}
           />
-          {errors.subject && <p>{errors.subject}</p>}
-        </div>
+          {errors.subject && <ErrorMessage>{errors.subject}</ErrorMessage>}
+        </FormGroup>
 
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
+        <FormGroup>
+          <Label htmlFor="email">Email</Label>
+          <Input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            hasError={!!errors.email}
           />
-          {errors.email && <p>{errors.email}</p>}
-        </div>
+          {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
+        </FormGroup>
 
-        <div>
-          <label htmlFor="body">Message</label>
-          <textarea
+        <FormGroup>
+          <Label htmlFor="body">Message</Label>
+          <TextArea
             id="body"
             name="body"
             value={formData.body}
             onChange={handleChange}
-          ></textarea>
-          {errors.body && <p>{errors.body}</p>}
-        </div>
+            hasError={!!errors.body}
+          ></TextArea>
+          {errors.body && <ErrorMessage>{errors.body}</ErrorMessage>}
+        </FormGroup>
 
-        <button type="submit">Submit</button>
+        <SubmitButton type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Sending...' : 'Submit'}
+        </SubmitButton>
       </form>
-    </div>
+    </ContactContainer>
   );
 };
 
