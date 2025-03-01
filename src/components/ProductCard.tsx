@@ -1,4 +1,4 @@
-// src/components/ProductCard.tsx (updated)
+// src/components/ProductCard.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -39,9 +39,31 @@ const ProductTitle = styled.h3`
   font-size: 1.2rem;
 `;
 
-const ProductPrice = styled.p`
-  font-weight: bold;
+const ProductPrice = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0.5rem 0;
+`;
+
+const DiscountedPrice = styled.span`
+  font-weight: bold;
+  font-size: 1.1rem;
+`;
+
+const OriginalPrice = styled.span`
+  text-decoration: line-through;
+  color: #6c757d;
+  font-size: 0.9rem;
+`;
+
+const DiscountBadge = styled.span`
+  background-color: #dc3545;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
 `;
 
 const ViewButton = styled(Link)`
@@ -59,11 +81,33 @@ const ViewButton = styled(Link)`
 `;
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  // Helper function to get the image URL from various possible fields
+  const getImageUrl = (product: Product): string | null => {
+    if (product.images && product.images.length > 0) {
+      return product.images[0].url;
+    }
+    if (product.image) {
+      return product.image;
+    }
+    if (product.imageUrl) {
+      return product.imageUrl;
+    }
+    return null;
+  };
+  
+  const imageUrl = getImageUrl(product);
+  
+  // Calculate discount percentage if there is one
+  const hasDiscount = product.price > product.discountedPrice;
+  const discountPercentage = hasDiscount 
+    ? Math.round(((product.price - product.discountedPrice) / product.price) * 100) 
+    : 0;
+  
   return (
     <Card>
-      {product.images && product.images.length > 0 ? (
+      {imageUrl ? (
         <img 
-          src={product.images[0].url} 
+          src={imageUrl} 
           alt={product.title} 
           style={{ width: '100%', height: '200px', objectFit: 'cover' }}
         />
@@ -74,7 +118,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       )}
       <ProductInfo>
         <ProductTitle>{product.title}</ProductTitle>
-        <ProductPrice>${product.discountedPrice}</ProductPrice>
+        <ProductPrice>
+          <DiscountedPrice>${product.discountedPrice}</DiscountedPrice>
+          {hasDiscount && (
+            <>
+              <OriginalPrice>${product.price}</OriginalPrice>
+              <DiscountBadge>{discountPercentage}% OFF</DiscountBadge>
+            </>
+          )}
+        </ProductPrice>
         <ViewButton to={`/product/${product.id}`}>View Product</ViewButton>
       </ProductInfo>
     </Card>
