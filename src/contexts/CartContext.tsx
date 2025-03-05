@@ -30,20 +30,28 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [itemCount, setItemCount] = useState<number>(0);
     const [total, setTotal] = useState<number>(0);
 
-    useEffect(() => {
-        const savedCart = localStorage.getItem('cart');
-        if (savedCart) {
-            setCart(JSON.parse(savedCart));
-        }
-    }, []);
-
-    useEffect(() => {
-        if (cart.length === 0) {
-           localStorage.setItem('cart', JSON.stringify(cart));
+ // First useEffect - just for loading from localStorage once on mount
+useEffect(() => {
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+        setCart(JSON.parse(savedCart));
     }
+}, []);
 
-    setItemCount(cart.reduce((sum, item) => total + item.quantity, 0));
-    setTotal(cart.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0));
+// Second useEffect - for saving to localStorage when cart changes
+useEffect(() => {
+    if (cart.length > 0) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    } else {
+        localStorage.removeItem('cart');
+    }
+    
+    // Calculate derived values
+    const newItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const newTotal = cart.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0);
+    
+    setItemCount(newItemCount);
+    setTotal(newTotal);
 }, [cart]);
 
     const addToCart = (product: Product): void => {

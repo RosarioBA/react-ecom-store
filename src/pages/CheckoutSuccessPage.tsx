@@ -1,5 +1,5 @@
 // src/pages/CheckoutSuccessPage.tsx
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { CartContext } from '../contexts/CartContext';
@@ -54,24 +54,28 @@ const ContinueButton = styled(Link)`
 `;
 
 const CheckoutSuccessPage: React.FC = () => {
-  const { clearCart } = useContext(CartContext);
-
-  useEffect(() => {
-    // Clear the cart when this page loads
-    clearCart();
-  }, [clearCart]);
-
-  return (
-    <SuccessContainer>
-      <SuccessIcon>✓</SuccessIcon>
-      <Title>Order Successful!</Title>
-      <Message>
-        Thank you for your purchase. Your order has been received and is being processed.
-        You will receive a confirmation email shortly with the details of your order.
-      </Message>
-      <ContinueButton to="/">Continue Shopping</ContinueButton>
-    </SuccessContainer>
-  );
-};
-
-export default CheckoutSuccessPage;
+    const { clearCart } = useContext(CartContext);
+    const hasCleared = useRef(false); // Add this ref to track if we've already cleared the cart
+  
+    useEffect(() => {
+      // Only clear the cart once when the component mounts
+      if (!hasCleared.current) {
+        clearCart();
+        hasCleared.current = true;
+      }
+    }, [clearCart]);
+  
+    return (
+      <SuccessContainer>
+        <SuccessIcon>✓</SuccessIcon>
+        <Title>Order Successful!</Title>
+        <Message>
+          Thank you for your purchase. Your order has been received and is being processed.
+          You will receive a confirmation email shortly with the details of your order.
+        </Message>
+        <ContinueButton to="/">Continue Shopping</ContinueButton>
+      </SuccessContainer>
+    );
+  };
+  
+  export default CheckoutSuccessPage;
