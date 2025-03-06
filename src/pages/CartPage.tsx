@@ -163,20 +163,6 @@ const CartPage: React.FC = () => {
     navigate('/checkout-success');
   };
 
-  // Helper function to get the image URL from various possible fields
-  const getImageUrl = (product: any): string | null => {
-    if (product.images && product.images.length > 0) {
-      return product.images[0].url;
-    }
-    if (product.image) {
-      return product.image;
-    }
-    if (product.imageUrl) {
-      return product.imageUrl;
-    }
-    return null;
-  };
-
   if (cart.length === 0) {
     return (
       <CartContainer>
@@ -198,51 +184,47 @@ const CartPage: React.FC = () => {
     <CartContainer>
       <Title>Your Cart</Title>
       
-      {cart.map(item => {
-        const imageUrl = getImageUrl(item);
-        
-        return (
-          <CartItemContainer key={item.id}>
-            <ItemImage>
-              {imageUrl ? (
-                <img 
-                  src={imageUrl} 
-                  alt={item.title}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <span>No image</span>
-              )}
-            </ItemImage>
+      {cart.map(item => (
+        <CartItemContainer key={item.id}>
+          <ItemImage>
+            {item.image && item.image.url ? (
+              <img 
+                src={item.image.url} 
+                alt={item.image.alt || item.title}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              <span>No image</span>
+            )}
+          </ItemImage>
+          
+          <ItemDetails>
+            <ItemTitle>{item.title}</ItemTitle>
+            <ItemPrice>${item.discountedPrice.toFixed(2)} each</ItemPrice>
             
-            <ItemDetails>
-              <ItemTitle>{item.title}</ItemTitle>
-              <ItemPrice>${item.discountedPrice.toFixed(2)} each</ItemPrice>
-              
-              <QuantityControls>
-                <QuantityButton 
-                  onClick={() => UpdateQuantity(item.id, item.quantity - 1)}
-                  disabled={item.quantity <= 1}
-                >
-                  -
-                </QuantityButton>
-                <span>{item.quantity}</span>
-                <QuantityButton onClick={() => UpdateQuantity(item.id, item.quantity + 1)}>
-                  +
-                </QuantityButton>
-              </QuantityControls>
-            </ItemDetails>
-            
-            <div>
-              <strong>${(item.discountedPrice * item.quantity).toFixed(2)}</strong>
-            </div>
-            
-            <RemoveButton onClick={() => removeFromCart(item.id)}>
-              Remove
-            </RemoveButton>
-          </CartItemContainer>
-        );
-      })}
+            <QuantityControls>
+              <QuantityButton 
+                onClick={() => UpdateQuantity(item.id, item.quantity - 1)}
+                disabled={item.quantity <= 1}
+              >
+                -
+              </QuantityButton>
+              <span>{item.quantity}</span>
+              <QuantityButton onClick={() => UpdateQuantity(item.id, item.quantity + 1)}>
+                +
+              </QuantityButton>
+            </QuantityControls>
+          </ItemDetails>
+          
+          <div>
+            <strong>${(item.discountedPrice * item.quantity).toFixed(2)}</strong>
+          </div>
+          
+          <RemoveButton onClick={() => removeFromCart(item.id)}>
+            Remove
+          </RemoveButton>
+        </CartItemContainer>
+      ))}
       
       <CartSummary>
         <h2>Order Summary</h2>

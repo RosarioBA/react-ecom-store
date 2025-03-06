@@ -81,56 +81,40 @@ const ViewButton = styled(Link)`
 `;
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  // Helper function to get the image URL from various possible fields
-  const getImageUrl = (product: Product): string | null => {
-    if (product.images && product.images.length > 0) {
-      return product.images[0].url;
-    }
-    if (product.image) {
-      return product.image;
-    }
-    if (product.imageUrl) {
-      return product.imageUrl;
-    }
-    return null;
+    // Calculate discount percentage if there is one
+    const hasDiscount = product.price > product.discountedPrice;
+    const discountPercentage = hasDiscount
+      ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
+      : 0;
+    
+    return (
+      <Card>
+        {product.image && product.image.url ? (
+          <img
+            src={product.image.url}
+            alt={product.image.alt || product.title}
+            style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+          />
+        ) : (
+          <ProductImage>
+            <span>No image available</span>
+          </ProductImage>
+        )}
+        <ProductInfo>
+          <ProductTitle>{product.title}</ProductTitle>
+          <ProductPrice>
+            <DiscountedPrice>${product.discountedPrice}</DiscountedPrice>
+            {hasDiscount && (
+              <>
+                <OriginalPrice>${product.price}</OriginalPrice>
+                <DiscountBadge>{discountPercentage}% OFF</DiscountBadge>
+              </>
+            )}
+          </ProductPrice>
+          <ViewButton to={`/product/${product.id}`}>View Product</ViewButton>
+        </ProductInfo>
+      </Card>
+    );
   };
   
-  const imageUrl = getImageUrl(product);
-  
-  // Calculate discount percentage if there is one
-  const hasDiscount = product.price > product.discountedPrice;
-  const discountPercentage = hasDiscount 
-    ? Math.round(((product.price - product.discountedPrice) / product.price) * 100) 
-    : 0;
-  
-  return (
-    <Card>
-      {imageUrl ? (
-        <img 
-          src={imageUrl} 
-          alt={product.title} 
-          style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-        />
-      ) : (
-        <ProductImage>
-          <span>No image available</span>
-        </ProductImage>
-      )}
-      <ProductInfo>
-        <ProductTitle>{product.title}</ProductTitle>
-        <ProductPrice>
-          <DiscountedPrice>${product.discountedPrice}</DiscountedPrice>
-          {hasDiscount && (
-            <>
-              <OriginalPrice>${product.price}</OriginalPrice>
-              <DiscountBadge>{discountPercentage}% OFF</DiscountBadge>
-            </>
-          )}
-        </ProductPrice>
-        <ViewButton to={`/product/${product.id}`}>View Product</ViewButton>
-      </ProductInfo>
-    </Card>
-  );
-};
-
-export default ProductCard;
+  export default ProductCard;

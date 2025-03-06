@@ -1,11 +1,11 @@
 // src/types/index.ts
 export interface ProductImage {
     url: string;
-    alt?: string;
+    alt: string;
   }
   
   export interface Review {
-    id: string;
+    id?: string;
     username: string;
     rating: number;
     description: string;
@@ -17,10 +17,9 @@ export interface ProductImage {
     description: string;
     price: number;
     discountedPrice: number;
-    // Use optional array for images
-    image?: string;
-    imageUrl?: string; 
-    images?: ProductImage[];
+    image: ProductImage;  // This is a single object, not an array
+    rating?: number;
+    tags?: string[];
     reviews?: Review[];
   }
   

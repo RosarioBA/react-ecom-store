@@ -152,22 +152,6 @@ const ProductPage: React.FC = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!product) return <div>Product not found</div>;
-
-  // Helper function to get the image URL from various possible fields
-  const getImageUrl = (product: Product): string | null => {
-    if (product.images && product.images.length > 0) {
-      return product.images[0].url;
-    }
-    if (product.image) {
-      return product.image;
-    }
-    if (product.imageUrl) {
-      return product.imageUrl;
-    }
-    return null;
-  };
-  
-  const imageUrl = getImageUrl(product);
   
   // Calculate discount percentage if there is one
   const hasDiscount = product.price > product.discountedPrice;
@@ -187,10 +171,10 @@ const ProductPage: React.FC = () => {
       <BackButton to="/">← Back to Products</BackButton>
       <ProductLayout>
         <ImageContainer>
-          {imageUrl ? (
+          {product.image && product.image.url ? (
             <img 
-              src={imageUrl} 
-              alt={product.title}
+              src={product.image.url} 
+              alt={product.image.alt || product.title}
               style={{ width: '100%', height: 'auto', maxHeight: '400px', objectFit: 'contain' }}
             />
           ) : (
@@ -235,4 +219,4 @@ const ProductPage: React.FC = () => {
   );
 };
 
-export default ProductPage;
+export default ProductPage; 
