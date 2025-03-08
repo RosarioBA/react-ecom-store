@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { fetchProductById } from '../api';
 import { CartContext } from '../contexts/CartContext';
 import { Product, Review } from '../types';
+import ProductRecommendations from '../components/ProductRecommendations';
 
 const ProductContainer = styled.div`
   max-width: 1000px;
@@ -215,8 +216,10 @@ const ProductPage: React.FC = () => {
           ))}
         </ReviewsSection>
       )}
+      
+      <ProductRecommendations currentProductId={product.id} limit={4} />
     </ProductContainer>
   );
 };
 
-export default ProductPage; 
+export default ProductPage;
