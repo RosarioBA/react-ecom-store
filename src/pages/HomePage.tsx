@@ -13,6 +13,11 @@ const HomeContainer = styled.div`
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
+
+    @media (max-width: 768px) {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const SearchContainer = styled.div`
@@ -38,6 +43,11 @@ const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 2rem;
+
+    @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 `;
 
 const NoResults = styled.div`

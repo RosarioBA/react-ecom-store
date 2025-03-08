@@ -59,10 +59,22 @@ const ItemImage = styled.div`
   justify-content: center;
   border-radius: 4px;
   overflow: hidden;
+
+@media (max-width: 768px) {
+    width: 100%;
+    height: 200px;
+    min-width: unset;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ItemDetails = styled.div`
   flex: 1;
+
+   @media (max-width: 768px) {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 `;
 
 const ItemTitle = styled.h3`
