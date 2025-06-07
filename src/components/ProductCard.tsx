@@ -86,7 +86,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     const discountPercentage = hasDiscount
       ? Math.round(((product.price - product.discountedPrice) / product.price) * 100)
       : 0;
-    
     return (
       <Card>
         {product.image && product.image.url ? (

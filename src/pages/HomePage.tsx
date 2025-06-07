@@ -83,11 +83,10 @@ const HomePage: React.FC = () => {
       try {
         setLoading(true);
         const data = await fetchProducts();
-        console.log('Products data:', data); // Log to check the response
         setProducts(data);
         setFilteredProducts(data);
         setLoading(false);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch products');
         setLoading(false);
       }

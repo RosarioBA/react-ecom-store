@@ -138,7 +138,6 @@ const ProductPage: React.FC = () => {
       try {
         setLoading(true);
         const data = await fetchProductById(id);
-        console.log('Product data:', data); // Log to check the response
         setProduct(data);
         setLoading(false);
       } catch (err) {
